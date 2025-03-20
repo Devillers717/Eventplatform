@@ -23,7 +23,9 @@ import Image from "next/image"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import { Checkbox } from "../ui/checkbox"
-
+import { useUploadThing } from "@/lib/uploadthing"
+import { useRouter } from "next/navigation"
+import { createEvent } from "@/lib/actions/event.action"
 
 
 type EventFormProps = {
@@ -33,6 +35,8 @@ type EventFormProps = {
 const EventForm = ({userId, type}: EventFormProps) => {
     const [files, setFiles] = useState<File[]>([])
     const initialValues = eventDefaultValues
+    const  {startUpload}=useUploadThing('imageUploader')
+    const router = useRouter();
     const form = useForm<z.infer<typeof eventformSchema>>({
         resolver: zodResolver(eventformSchema),
         defaultValues: initialValues
@@ -40,9 +44,30 @@ const EventForm = ({userId, type}: EventFormProps) => {
       })
      
      
-      function onSubmit(values: z.infer<typeof eventformSchema>) {
-        console.log(values)
+     async function onSubmit(values: z.infer<typeof eventformSchema>) {
+        let uploadedImageUrl = values.imageUrl;
+        if (files.length > 0){
+            const uploadedImages = await startUpload(files)
+            if(!uploadedImages){
+                return
+            }
+            uploadedImageUrl=uploadedImages[0].url
+        }
+        if(type === 'create')
+            try{
+                const newEvent = await createEvent({
+                    event: { ...values, description: values.descriptiom, imageUrl: uploadedImageUrl },
+                    userId,
+                    path:'/profile'
+                })
+                if(newEvent){
+                    form.reset();
+                    router.push(`/events/${newEvent._id}`)
+                }
+      } catch(error){
+        console.log(error)
       }
+    }
   return (
     <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -259,7 +284,7 @@ const EventForm = ({userId, type}: EventFormProps) => {
           size="lg"
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
-        >
+         >
           {form.formState.isSubmitting ? (
             'Submitting...'
           ): `${type} Event `}</Button>

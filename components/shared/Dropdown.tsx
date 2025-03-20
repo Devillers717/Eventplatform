@@ -19,7 +19,7 @@ import {
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
   import { Input } from "../ui/input"
-import { createCategory } from "@/lib/actions/category.actions"
+import { createCategory,getAllCategories } from "@/lib/actions/category.actions"
   
 type DropdownProps = {
     value?: string
@@ -34,8 +34,17 @@ const Dropdown = ({ value, onChangeHandler}:DropdownProps) => {
         createCategory({
             categoryName: newCategory.trim()
         })
+        .then((category)=>{
+            setCategories((prevState) => [...prevState, category as unknown as ICategory])
+        })
     }
-
+    useEffect(() => {
+        const getCategories = async ()=> {
+            const categoryList = await getAllCategories();
+            categoryList && setCategories(categoryList as ICategory[])
+        }
+        getCategories();
+    },[])
   return (
     <Select onValueChange={onChangeHandler} defaultValue={value}>
   <SelectTrigger className="select-field">
@@ -48,7 +57,7 @@ const Dropdown = ({ value, onChangeHandler}:DropdownProps) => {
           </SelectItem>
         ))}
     <AlertDialog>
-  <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-sm font-medium text-gray-600 hover:bg-gray-950 focus:text-primary-500">Open</AlertDialogTrigger>
+  <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3  text-sm font-medium text-gray-600 hover:bg-gray-950 focus:text-primary-500">Add New Category</AlertDialogTrigger>
   <AlertDialogContent className="bg-white">
     <AlertDialogHeader>
       <AlertDialogTitle>New Category</AlertDialogTitle>
