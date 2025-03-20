@@ -1,15 +1,8 @@
 'use server'
-
-import { revalidatePath } from 'next/cache'
-
 import { connectToDtabase as connectToDatabase } from '@/lib/database'
-import User from '@/lib/database/models/user.model'
-import Order from '@/lib/database/models/order.model'
-import Event from '@/lib/database/models/event.model'
 import { handleError } from '@/lib/utils'
 import Category from '@/lib/database/models/category.model';
-
-import { CreateCategoryParams, CreateUserParams, UpdateUserParams } from '@/types'
+import { CreateCategoryParams,  } from '@/types'
 
 export const createCategory = async ({ categoryName }: { categoryName: string }) : Promise<CreateCategoryParams> => {
 

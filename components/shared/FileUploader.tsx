@@ -22,7 +22,7 @@ export function FileUploader({ imageUrl, onFieldChange, setFiles }: FileUploader
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: generateClientDropzoneAccept(['image/*']),
+    accept: generateClientDropzoneAccept(['image/*'])
   })
 
   return (

@@ -51,7 +51,7 @@ const EventForm = ({userId, type}: EventFormProps) => {
             if(!uploadedImages){
                 return
             }
-            uploadedImageUrl=uploadedImages[0].url
+            uploadedImageUrl=uploadedImages[0].ufsUrl
         }
         if(type === 'create')
             try{
