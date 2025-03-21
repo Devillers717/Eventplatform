@@ -52,11 +52,6 @@ export async function POST(req: Request) {
   // For this guide, log payload to console
   const { id } = evt.data
   const eventType = evt.type
-
-  if (eventType === 'user.created') {
-    console.log('userId: and eventType', evt?.data?.id, eventType)
-  }
-
   if(eventType ==='user.created'){
     const {id, email_addresses, image_url, first_name,last_name,username}=evt.data;
     const User ={
@@ -68,15 +63,14 @@ export async function POST(req: Request) {
       photo: image_url,
     }
     const clerk = await clerkClient();
-    const newUser = await createUser(User)
-    if (newUser) {
+    if (User) {
       await clerk.users.updateUserMetadata(id, {
         publicMetadata: {
-          userId: newUser._id
+          userId: User.clerkId
         }
       })
     }
-    // const newUser = await createUser(User);
+    const newUser = await createUser(User);
     return NextResponse.json({message: 'OK', user: newUser })
   }
   if(eventType ==='user.updated'){
