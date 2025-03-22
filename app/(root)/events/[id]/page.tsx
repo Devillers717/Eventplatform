@@ -10,11 +10,11 @@ async function EventDetails({
   params,
   searchParams,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  // For Next.js App Router, we need to extract the id without destructuring in parameter
-  const id = params.id;
+  const { id } = await params;
+
   
   // Extract page from searchParams safely
   const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
