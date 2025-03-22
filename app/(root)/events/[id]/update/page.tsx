@@ -6,7 +6,8 @@ type UpdateEventprops={
     id: string
   }
 }
-const UpdateEvent = async ({params: { id }}:UpdateEventprops) => {
+const UpdateEvent = async ({params}: UpdateEventprops) => {
+  const { id } = params;
     const authResult = await auth();
     const {sessionClaims}= authResult;
     const userId =sessionClaims?.userId as string;
