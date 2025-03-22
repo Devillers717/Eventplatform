@@ -6,27 +6,24 @@ import { SearchParamProps } from "@/types";
 import Image from "next/image";
 import React from "react";
 
-async function EventDetails({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const { id } = await params;
-
+const EventDetails = async (props: SearchParamProps) => {
+  // Get the parameters without destructuring in the function signature
+  const { params, searchParams } = props;
   
-  // Extract page from searchParams safely
-  const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
+  // Await the promise-like objects
+  const paramData = await params;
+  const searchParamData = await searchParams;
   
-  // Fetch event data
+  // Now use the resolved data
+  const id = paramData.id;
+  const pageParam = searchParamData.page as string;
+  
   const event = await getEventById(id);
   
-  // Fetch related events
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
     eventId: event._id,
-    page: page,
+    page: pageParam,
   });
 
   return (
@@ -98,7 +95,7 @@ async function EventDetails({
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
           limit={3}
-          page={page}
+          page={pageParam}
           totalPages={relatedEvents?.totalPages}
         />
       </section>
