@@ -6,29 +6,16 @@ import { SearchParamProps } from "@/types";
 import Image from "next/image";
 import React from "react";
 
- async function EventDetails({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  // For Next.js App Router, we need to extract the id without destructuring in parameter
-  const id = params.id;
-  
-  // Extract page from searchParams safely
-  const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
-  
-  // Fetch event data
+const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
+  const { id } = await params;
   const event = await getEventById(id);
-  
-  // Fetch related events
   const relatedEvents = await getRelatedEventsByCategory({
-    categoryId: event.category._id!,
+    categoryId: event.category._id,
     eventId: event._id,
-    page: page,
-  });
-
+    page: (await searchParams).page as string,
+  })
+  const searchParamValues = await searchParams;
+const page = searchParamValues.page as string;
   return (
     <>
       <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
@@ -90,8 +77,7 @@ import React from "react";
       
       {/* EVENTS with the same category */}
       <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-        <h2 className="font-bold text-2xl">Related Events</h2>
-
+        <h2 className="font-bold text-2xl">Related Events</h2>  
         <Collection
           data={relatedEvents?.data}
           emptyTitle="No Events Found"
