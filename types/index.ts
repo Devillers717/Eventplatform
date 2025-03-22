@@ -148,6 +148,6 @@ export type CreateUserParams = {
       id: string;
     }>;
     searchParams: Promise<{
-      [key: string]: string | string[] | undefined;
+      [key: string ]: string | string[] | undefined;
     }>;
   };

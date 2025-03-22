@@ -24,7 +24,7 @@ import React from "react";
   
   // Fetch related events
   const relatedEvents = await getRelatedEventsByCategory({
-    categoryId: event.category._id,
+    categoryId: event.category._id!,
     eventId: event._id,
     page: page,
   });
