@@ -6,24 +6,27 @@ import { SearchParamProps } from "@/types";
 import Image from "next/image";
 import React from "react";
 
-const EventDetails = async (props: SearchParamProps) => {
-  // Get the parameters without destructuring in the function signature
-  const { params, searchParams } = props;
+ async function EventDetails({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  // For Next.js App Router, we need to extract the id without destructuring in parameter
+  const id = params.id;
   
-  // Await the promise-like objects
-  const paramData = await params;
-  const searchParamData = await searchParams;
+  // Extract page from searchParams safely
+  const page = typeof searchParams.page === 'string' ? searchParams.page : '1';
   
-  // Now use the resolved data
-  const id = paramData.id;
-  const pageParam = searchParamData.page as string;
-  
+  // Fetch event data
   const event = await getEventById(id);
   
+  // Fetch related events
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
     eventId: event._id,
-    page: pageParam,
+    page: page,
   });
 
   return (
@@ -95,7 +98,7 @@ const EventDetails = async (props: SearchParamProps) => {
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
           limit={3}
-          page={pageParam}
+          page={page}
           totalPages={relatedEvents?.totalPages}
         />
       </section>
